@@ -37,3 +37,11 @@ L'interface s'ouvrira automatiquement dans votre navigateur web par défaut à l
 
 ## 📁 Structure
 * `app.py` : Script principal contenant toute la logique d'affichage, la barre de navigation et l'interactivité utilisateur.
+
+## 🧪 Tests Unitaires
+
+Une suite de tests a été mise en place pour garantir le bon fonctionnement de la logique interne de l'interface utilisateur. Ces tests sont écrits avec `pytest` et se trouvent dans le dossier `tests/`.
+
+- **`test_app.py`** : 
+  - Teste la fonction de traitement d'images `apply_transformations` (utilisée dans l'onglet d'Analyse Exploratoire).
+  - Vérifie que chaque transformation (floutage, égalisation, rotation, miroir) génère bien un tableau NumPy avec les bonnes dimensions, garantissant que les images modifiées seront correctement formatées pour l'affichage sans faire planter l'application Streamlit.

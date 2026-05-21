@@ -47,3 +47,12 @@ uvicorn dashboard.api.main:app --reload
 2. Ajouter le code de chargement de votre modèle U-Net/DeepLab sauvegardé (`.keras` ou `.h5`).
 3. Tester la route `/predict` directement via l'interface Swagger (`/docs`).
 4. Connecter l'interface Streamlit (dossier `ui`) à cette API locale en utilisant la bibliothèque Python `requests`.
+
+## 🧪 Tests Unitaires
+
+L'API est couverte par des tests automatisés utilisant `pytest` et `TestClient` de FastAPI. Ils sont situés dans le dossier `tests/`.
+
+- **`test_api.py`** vérifie trois comportements clés :
+  - **`test_read_root`** : S'assure que le point d'entrée de santé (`/`) répond correctement (Code 200).
+  - **`test_get_image_not_found`** : Vérifie que le gestionnaire d'erreurs attrape bien les demandes d'images inexistantes (`/images/{filename}`) et renvoie une erreur 404 explicite.
+  - **`test_predict_segmentation_no_prompt`** : Teste la route de prédiction majeure (`/predict/`). En envoyant une image factice, on valide l'intégrité de l'analyse du payload, le traitement de l'image, et le format de retour (qui doit contenir le statut, le score de confiance, et le masque de segmentation encodé en Base64). Ce test est conçu pour ne pas bloquer les pipelines d'Intégration Continue (CI) même si les poids du modèle complet ne sont pas téléchargés sur le serveur d'intégration (tolérance au code 500 dans ce contexte précis).
