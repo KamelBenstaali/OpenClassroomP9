@@ -3,6 +3,8 @@ import numpy as np
 import cv2
 from PIL import Image
 import matplotlib.pyplot as plt
+import pandas as pd
+import plotly.express as px
 from streamlit_drawable_canvas import st_canvas
 
 # Plus besoin de patch, on injecte l'image directement dans l'état du Canvas en Base64.
@@ -31,7 +33,15 @@ def apply_transformations(image):
     img_eq = cv2.merge((l_eq, a, b))
     equalized = cv2.cvtColor(img_eq, cv2.COLOR_LAB2RGB)
     
-    return blurred, equalized
+    # Rotation
+    height, width = img_array.shape[:2]
+    matrix = cv2.getRotationMatrix2D((width/2, height/2), 45, 1)
+    rotated = cv2.warpAffine(img_array, matrix, (width, height))
+    
+    # Flip (Miroir)
+    flipped = cv2.flip(img_array, 1)
+    
+    return blurred, equalized, rotated, flipped
 
 # --- Navigation Horizontale ---
 st.markdown("<h2 style='text-align: center;'>🩺 Projet P9 - Dashboard de Segmentation</h2>", unsafe_allow_html=True)
@@ -65,23 +75,44 @@ if page == "Analyse Exploratoire (EDA)":
         st.metric(label="Images de test", value="1 000")
         
     st.markdown("### Comptage et distribution")
-    # Simulation de données pour le graphique interactif (WCAG compliance)
-    labels = ['Entraînement', 'Validation', 'Test']
-    sizes = [2594, 100, 1000]
-    # Palette Okabe-Ito, excellente pour l'accessibilité (Daltonisme)
-    colors = ['#0072B2', '#E69F00', '#009E73'] 
+    import os
+    data_dir = os.path.join(os.path.dirname(__file__), "data_for_stats")
     
-    fig, ax = plt.subplots(figsize=(8, 4))
-    bars = ax.bar(labels, sizes, color=colors)
-    ax.set_ylabel("Nombre d'images")
-    ax.set_title("Répartition du dataset ISIC 2018 (Critère WCAG respecté)")
+    # --- Première ligne de graphiques ---
+    col_row1_1, col_row1_2 = st.columns(2)
     
-    # Ajouter la valeur sur chaque barre pour plus de lisibilité
-    for bar in bars:
-        yval = bar.get_height()
-        ax.text(bar.get_x() + bar.get_width()/2, yval + 50, int(yval), ha='center', va='bottom', fontweight='bold')
+    with col_row1_1:
+        # Split graphique avec Plotly
+        split_df = pd.read_csv(os.path.join(data_dir, "dataset_split.csv"))
+        fig_split = px.bar(split_df, x="Split", y="Nombre d'images", color="Split", 
+                           title="Répartition du dataset ISIC 2018",
+                           color_discrete_sequence=['#0072B2', '#E69F00', '#009E73'])
+        st.plotly_chart(fig_split, use_container_width=True)
         
-    st.pyplot(fig, clear_figure=True)
+    with col_row1_2:
+        # Tailles des lésions
+        size_df = pd.read_csv(os.path.join(data_dir, "lesion_sizes.csv"))
+        fig_size = px.bar(size_df, x="Catégorie", y="count", color="Catégorie", 
+                          title="Taille des lésions")
+        st.plotly_chart(fig_size, use_container_width=True)
+        
+    # --- Deuxième ligne de graphiques ---
+    col_row2_1, col_row2_2 = st.columns(2)
+    
+    with col_row2_1:
+        # Résolution Plotly
+        res_df = pd.read_csv(os.path.join(data_dir, "image_resolutions.csv"))
+        fig_res = px.scatter(res_df, x="Largeur", y="Hauteur", opacity=0.5, 
+                             title="Distribution des résolutions d'images")
+        st.plotly_chart(fig_res, use_container_width=True)
+        
+    with col_row2_2:
+        # Camembert Catégorie des maladies
+        patho_df = pd.read_csv(os.path.join(data_dir, "pathology_distribution_train.csv"))
+        fig_patho = px.pie(patho_df, names="Maladie", values="Nombre d'images", 
+                           title="Catégories des maladies",
+                           color_discrete_sequence=px.colors.sequential.RdBu)
+        st.plotly_chart(fig_patho, use_container_width=True)
     
     st.header("2. Transformations d'images (Data Augmentation / Pre-processing)")
     st.markdown("Les spécifications demandent de présenter des exemples de transformations. Testez avec une image :")
@@ -89,15 +120,19 @@ if page == "Analyse Exploratoire (EDA)":
     uploaded_eda = st.file_uploader("Chargez une image pour visualiser les transformations", type=["jpg", "png", "jpeg"], key="eda")
     if uploaded_eda is not None:
         image = Image.open(uploaded_eda)
-        blurred, equalized = apply_transformations(image)
+        blurred, equalized, rotated, flipped = apply_transformations(image)
         
-        col1, col2, col3 = st.columns(3)
+        col1, col2, col3, col4, col5 = st.columns(5)
         with col1:
-            st.image(image, caption="Image Originale", use_container_width=True)
+            st.image(image, caption="Originale", use_container_width=True)
         with col2:
-            st.image(blurred, caption="Floutage (Gaussian Blur)", use_container_width=True)
+            st.image(blurred, caption="Floutage", use_container_width=True)
         with col3:
-            st.image(equalized, caption="Égalisation d'histogramme", use_container_width=True)
+            st.image(equalized, caption="Egalisation", use_container_width=True)
+        with col4:
+            st.image(rotated, caption="Rotation 45°", use_container_width=True)
+        with col5:
+            st.image(flipped, caption="Miroir Horizontal", use_container_width=True)
 
 # ==========================================
 # PAGE 2 : MOTEUR DE PREDICTION
@@ -333,11 +368,23 @@ elif page == "Moteur de Prédiction":
                         st.success(f'Segmentation terminée avec succès ! (Confiance MedSAM : {score:.2f})')
                         
                         # Afficher côte à côte
-                        col1, col2 = st.columns(2)
+                        col1, col2, col3 = st.columns(3)
                         with col1:
                             st.image(image_to_predict, caption="Image Originale", use_container_width=True)
                         with col2:
                             st.image(mask_image, caption="Masque Prédit (MedSAM)", use_container_width=True)
+                        with col3:
+                            if input_method == "Choisir un exemple du dataset":
+                                import os
+                                mask_name = selected_example.replace('.jpg', '_segmentation.png')
+                                gt_path = os.path.join(example_dir, mask_name)
+                                if os.path.exists(gt_path):
+                                    gt_mask = Image.open(gt_path)
+                                    st.image(gt_mask, caption="Vérité Terrain (Masque Réel)", use_container_width=True)
+                                else:
+                                    st.info("Masque de vérité terrain non disponible.")
+                            else:
+                                st.info("Masque de vérité terrain non disponible pour les uploads.")
                     else:
                         st.error(f"Erreur API ({response.status_code}) : {response.text}")
                         
