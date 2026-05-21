@@ -1,0 +1,33 @@
+name: CI (Tests unitaires)
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Configuration de Python 3.10
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.10"
+        
+    - name: Installation des dépendances systèmes (OpenCV)
+      run: sudo apt-get update && sudo apt-get install -y libgl1-mesa-glx
+        
+    - name: Installation des dépendances Python
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        # S'assurer que pytest et httpx (pour TestClient) sont présents
+        pip install pytest httpx
+        
+    - name: Exécution des tests (API et UI)
+      run: |
+        cd dashboard
+        python -m pytest api/tests/ ui/tests/

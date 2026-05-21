@@ -57,13 +57,13 @@ st.markdown("---")
 # PAGE 1 : ANALYSE EXPLORATOIRE (EDA)
 # ==========================================
 if page == "Analyse Exploratoire (EDA)":
-    st.title("📊 Analyse Exploratoire des Données (ISIC 2018)")
+    st.markdown("<h1 style='text-align: center;'>📊 Analyse Exploratoire des Données (ISIC 2018)</h1>", unsafe_allow_html=True)
     st.markdown("""
-    Cette section présente une exploration du jeu de données **ISIC 2018**, utilisé pour l'entraînement 
-    de notre modèle de segmentation de lésions cutanées.
-    """)
+    <p style='text-align: center;'>Cette section présente une exploration du jeu de données <b>ISIC 2018</b>, utilisé pour l'entraînement 
+    de notre modèle de segmentation de lésions cutanées.</p>
+    """, unsafe_allow_html=True)
     
-    st.header("1. Répartition des données")
+    st.markdown("<h2 style='text-align: center;'>1. Répartition des données</h2>", unsafe_allow_html=True)
     
     # Métriques
     col1, col2, col3 = st.columns(3)
@@ -74,7 +74,7 @@ if page == "Analyse Exploratoire (EDA)":
     with col3:
         st.metric(label="Images de test", value="1 000")
         
-    st.markdown("### Comptage et distribution")
+    st.markdown("<h3 style='text-align: center;'>Comptage et distribution</h3>", unsafe_allow_html=True)
     import os
     data_dir = os.path.join(os.path.dirname(__file__), "data_for_stats")
     
@@ -82,40 +82,44 @@ if page == "Analyse Exploratoire (EDA)":
     col_row1_1, col_row1_2 = st.columns(2)
     
     with col_row1_1:
-        # Split graphique avec Plotly
-        split_df = pd.read_csv(os.path.join(data_dir, "dataset_split.csv"))
-        fig_split = px.bar(split_df, x="Split", y="Nombre d'images", color="Split", 
-                           title="Répartition du dataset ISIC 2018",
-                           color_discrete_sequence=['#0072B2', '#E69F00', '#009E73'])
-        st.plotly_chart(fig_split, use_container_width=True)
+        with st.container(border=True):
+            # Split graphique avec Plotly
+            split_df = pd.read_csv(os.path.join(data_dir, "dataset_split.csv"))
+            fig_split = px.bar(split_df, x="Split", y="Nombre d'images", color="Split", 
+                               color_discrete_sequence=['#0072B2', '#E69F00', '#009E73'])
+            st.plotly_chart(fig_split, use_container_width=True)
+            st.markdown("<h4 style='text-align: center;'>Répartition du dataset ISIC 2018</h4>", unsafe_allow_html=True)
         
     with col_row1_2:
-        # Tailles des lésions
-        size_df = pd.read_csv(os.path.join(data_dir, "lesion_sizes.csv"))
-        fig_size = px.bar(size_df, x="Catégorie", y="count", color="Catégorie", 
-                          title="Taille des lésions")
-        st.plotly_chart(fig_size, use_container_width=True)
+        with st.container(border=True):
+            # Tailles des lésions
+            size_df = pd.read_csv(os.path.join(data_dir, "lesion_sizes.csv"))
+            fig_size = px.bar(size_df, x="Catégorie", y="count", color="Catégorie")
+            st.plotly_chart(fig_size, use_container_width=True)
+            st.markdown("<h4 style='text-align: center;'>Taille des lésions</h4>", unsafe_allow_html=True)
         
     # --- Deuxième ligne de graphiques ---
     col_row2_1, col_row2_2 = st.columns(2)
     
     with col_row2_1:
-        # Résolution Plotly
-        res_df = pd.read_csv(os.path.join(data_dir, "image_resolutions.csv"))
-        fig_res = px.scatter(res_df, x="Largeur", y="Hauteur", opacity=0.5, 
-                             title="Distribution des résolutions d'images")
-        st.plotly_chart(fig_res, use_container_width=True)
+        with st.container(border=True):
+            # Résolution Plotly
+            res_df = pd.read_csv(os.path.join(data_dir, "image_resolutions.csv"))
+            fig_res = px.scatter(res_df, x="Largeur", y="Hauteur", opacity=0.5)
+            st.plotly_chart(fig_res, use_container_width=True)
+            st.markdown("<h4 style='text-align: center;'>Distribution des résolutions d'images</h4>", unsafe_allow_html=True)
         
     with col_row2_2:
-        # Camembert Catégorie des maladies
-        patho_df = pd.read_csv(os.path.join(data_dir, "pathology_distribution_train.csv"))
-        fig_patho = px.pie(patho_df, names="Maladie", values="Nombre d'images", 
-                           title="Catégories des maladies",
-                           color_discrete_sequence=px.colors.sequential.RdBu)
-        st.plotly_chart(fig_patho, use_container_width=True)
+        with st.container(border=True):
+            # Camembert Catégorie des maladies
+            patho_df = pd.read_csv(os.path.join(data_dir, "pathology_distribution_train.csv"))
+            fig_patho = px.pie(patho_df, names="Maladie", values="Nombre d'images", 
+                               color_discrete_sequence=px.colors.sequential.RdBu)
+            st.plotly_chart(fig_patho, use_container_width=True)
+            st.markdown("<h4 style='text-align: center;'>Catégories des maladies</h4>", unsafe_allow_html=True)
     
-    st.header("2. Transformations d'images (Data Augmentation / Pre-processing)")
-    st.markdown("Les spécifications demandent de présenter des exemples de transformations. Testez avec une image :")
+    st.markdown("<h2 style='text-align: center;'>2. Transformations d'images (Data Augmentation / Pre-processing)</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center;'>Les spécifications demandent de présenter des exemples de transformations. Testez avec une image :</p>", unsafe_allow_html=True)
     
     uploaded_eda = st.file_uploader("Chargez une image pour visualiser les transformations", type=["jpg", "png", "jpeg"], key="eda")
     if uploaded_eda is not None:
@@ -138,10 +142,10 @@ if page == "Analyse Exploratoire (EDA)":
 # PAGE 2 : MOTEUR DE PREDICTION
 # ==========================================
 elif page == "Moteur de Prédiction":
-    st.title("🧠 Moteur de Prédiction (Segmentation)")
+    st.markdown("<h1 style='text-align: center;'>🧠 Moteur de Prédiction (Segmentation)</h1>", unsafe_allow_html=True)
     st.markdown("""
-    Utilisez le modèle d'Intelligence Artificielle MedSAM pour segmenter automatiquement la lésion sur une image dermatologique.
-    """)
+    <p style='text-align: center;'>Utilisez le modèle d'Intelligence Artificielle MedSAM pour segmenter automatiquement la lésion sur une image dermatologique.</p>
+    """, unsafe_allow_html=True)
     
     if "canvas_key" not in st.session_state:
         st.session_state.canvas_key = 0
@@ -151,7 +155,7 @@ elif page == "Moteur de Prédiction":
     if "box_ymax" not in st.session_state: st.session_state.box_ymax = 0
     if "manual_boxes" not in st.session_state: st.session_state.manual_boxes = []
 
-    st.header("1. Sélection de la donnée en entrée")
+    st.markdown("<h2 style='text-align: center;'>1. Sélection de la donnée en entrée</h2>", unsafe_allow_html=True)
     input_method = st.radio("Comment souhaitez-vous fournir l'image ?", 
                             ["Télécharger une image (Upload)", "Choisir un exemple du dataset"])
     
@@ -182,7 +186,7 @@ elif page == "Moteur de Prédiction":
             image_to_predict = Image.open(image_path)
             st.success(f"Image {selected_example} prête.")
             
-    st.header("2. Configuration du Modèle (MedSAM)")
+    st.markdown("<h2 style='text-align: center;'>2. Configuration du Modèle (MedSAM)</h2>", unsafe_allow_html=True)
     st.info("💡 Le modèle utilisé est **MedSAM**, un 'Foundation Model' qui requiert un guide (prompt) pour segmenter la lésion.")
     
     # On ne garde que le traçage par rectangle (Boîte englobante)
@@ -208,7 +212,7 @@ elif page == "Moteur de Prédiction":
         col_canvas, col_options = st.columns([2, 1], gap="large")
 
         with col_options:
-            st.markdown("### ♿ Accessibilité (WCAG)")
+            st.markdown("<h3 style='text-align: center;'>♿ Accessibilité (WCAG)</h3>", unsafe_allow_html=True)
             st.info("Utilisez ces champs si vous ne pouvez pas utiliser la souris.")
             
             # Grille 2x2 pour les coordonnées
@@ -262,7 +266,7 @@ elif page == "Moteur de Prédiction":
             edit_mode = st.checkbox("Mode Modification / Suppression 🖱️", key="edit_box")
 
         with col_canvas:
-            st.markdown("**Tracé de la boîte englobante :**")
+            st.markdown("<p style='text-align: center;'><b>Tracé de la boîte englobante :</b></p>", unsafe_allow_html=True)
             
             # Injection de la boîte manuelle dans le canvas
             draw_state = {
@@ -334,7 +338,7 @@ elif page == "Moteur de Prédiction":
         else:
             st.info("Utilisez la souris pour dessiner à gauche ou les champs à droite pour l'accessibilité.")
             
-    st.header("3. Résultat de la prédiction")
+    st.markdown("<h2 style='text-align: center;'>3. Résultat de la prédiction</h2>", unsafe_allow_html=True)
     if image_to_predict is not None:
         if st.button("Lancer la segmentation 🚀", type="primary"):
             with st.spinner('Analyse par le modèle MedSAM en cours... (Cela peut prendre quelques secondes)'):
