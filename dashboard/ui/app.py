@@ -119,31 +119,22 @@ if page == "Analyse Exploratoire (EDA)":
             st.markdown("<h4 style='text-align: center;'>Catégories des maladies</h4>", unsafe_allow_html=True)
     
     st.markdown("<h2 style='text-align: center;'>2. Transformations d'images (Data Augmentation / Pre-processing)</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center;'>Les spécifications demandent de présenter des exemples de transformations. Testez avec une image :</p>", unsafe_allow_html=True)
-    
-    input_method_eda = st.radio("Comment souhaitez-vous fournir l'image ?", 
-                                ["Télécharger une image (Upload)", "Choisir un exemple du dataset"], key="radio_eda")
+    st.markdown("<p style='text-align: center;'>Visualisez l'effet de diverses transformations applicables sur les images. Choisissez un exemple du dataset :</p>", unsafe_allow_html=True)
     
     image_eda = None
-    
-    if input_method_eda == "Télécharger une image (Upload)":
-        uploaded_eda = st.file_uploader("Chargez une image pour visualiser les transformations", type=["jpg", "png", "jpeg"], key="eda")
-        if uploaded_eda is not None:
-            image_eda = Image.open(uploaded_eda)
+    import os
+    example_dir = os.path.join(os.path.dirname(__file__), "data_example")
+    if os.path.exists(example_dir):
+        example_images = [f for f in os.listdir(example_dir) if f.endswith('.jpg')]
+        example_images.sort()
     else:
-        import os
-        example_dir = os.path.join(os.path.dirname(__file__), "data_example")
-        if os.path.exists(example_dir):
-            example_images = [f for f in os.listdir(example_dir) if f.endswith('.jpg')]
-            example_images.sort()
-        else:
-            example_images = []
-            
-        if not example_images:
-            st.error("⚠️ Aucune image trouvée dans le dossier 'data_example'.")
-        else:
-            selected_example_eda = st.selectbox("Choisissez une image de démonstration :", example_images, key="select_eda")
-            image_eda = Image.open(os.path.join(example_dir, selected_example_eda))
+        example_images = []
+        
+    if not example_images:
+        st.error("⚠️ Aucune image trouvée dans le dossier 'data_example'.")
+    else:
+        selected_example_eda = st.selectbox("Choisissez une image de démonstration :", example_images, key="select_eda")
+        image_eda = Image.open(os.path.join(example_dir, selected_example_eda))
 
     if image_eda is not None:
         blurred, equalized, rotated, flipped = apply_transformations(image_eda)
