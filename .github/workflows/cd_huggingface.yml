@@ -35,4 +35,4 @@ jobs:
           # Configuration du remote Hugging Face
           git remote add hf https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$HF_SPACE_NAME
           # Push de la branche courante vers HF
-          git push -f hf main
+          git push -f hf HEAD:main
