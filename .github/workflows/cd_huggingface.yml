@@ -3,7 +3,6 @@ name: CD (Déploiement de l'API sur Hugging Face Spaces)
 on:
   push:
     branches: [ "main", "master" ]
-    # On déploie l'API uniquement si les fichiers de l'API ou le Dockerfile changent
     paths:
       - 'dashboard/api/**'
       - 'requirements.txt'
@@ -13,26 +12,25 @@ jobs:
   deploy-to-hf-spaces:
     runs-on: ubuntu-latest
     
-    # On attend que le workflow CI passe avant de déployer !
-    # (Décommentez si vous souhaitez bloquer le déploiement en cas d'échec des tests)
-    # needs: [test] 
-
     steps:
       - name: Checkout du code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          lfs: true # Important car vous avez un modèle .pth de 300Mo
+          fetch-depth: 1
+          lfs: true
           
-      - name: Push vers Hugging Face
+      - name: Configuration de Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          
+      - name: Installation de Hugging Face Hub
+        run: pip install huggingface_hub
+          
+      - name: Déploiement via huggingface-cli
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          HF_USERNAME: "S0l0kame"
-          HF_SPACE_NAME: "OpenClassroomP9"
+          HF_SPACE_NAME: "S0l0kame/OpenClassroomP9"
         run: |
-          git config --global user.email "actions@github.com"
-          git config --global user.name "GitHub Actions"
-          # Configuration du remote Hugging Face
-          git remote add hf https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$HF_SPACE_NAME
-          # Push de la branche courante vers HF
-          git push -f hf HEAD:main
+          # Téléversement direct du code vers le Space (gère LFS automatiquement et ignore l'historique Git)
+          huggingface-cli upload $HF_SPACE_NAME . --repo-type space --token $HF_TOKEN --exclude ".git/*" ".github/*"
