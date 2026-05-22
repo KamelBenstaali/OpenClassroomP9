@@ -29,8 +29,18 @@ app.add_middleware(
 
 # Chemin relatif vers le modèle MedSAM
 import os
+import urllib.request
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MEDSAM_CHECKPOINT_PATH = os.path.join(BASE_DIR, "medsam_vit_b.pth")
+
+# Téléchargement automatique du modèle si non présent (ex: sur Hugging Face Spaces)
+if not os.path.exists(MEDSAM_CHECKPOINT_PATH):
+    print("Modèle introuvable localement. Téléchargement depuis Hugging Face en cours... (Cela peut prendre un moment)")
+    url = "https://huggingface.co/SansuiHan/medical_models/resolve/main/medsam_vit_b.pth"
+    urllib.request.urlretrieve(url, MEDSAM_CHECKPOINT_PATH)
+    print("Téléchargement terminé !")
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Dossier temporaire pour servir les images au canvas Streamlit
