@@ -358,7 +358,8 @@ elif page == "Moteur de Prédiction":
                 
                 try:
                     # Envoi à l'API locale
-                    response = requests.post("http://127.0.0.1:8000/predict/", files=files, data=data)
+                    API_URL = "https://s0l0kame-openclassroomp9.hf.space/predict/"
+                    response = requests.post(API_URL, files=files, data=data)
                     
                     if response.status_code == 200:
                         result = response.json()
@@ -393,7 +394,7 @@ elif page == "Moteur de Prédiction":
                         st.error(f"Erreur API ({response.status_code}) : {response.text}")
                         
                 except requests.exceptions.ConnectionError:
-                    st.error("Impossible de se connecter à l'API. Vérifiez que le serveur uvicorn est bien lancé.")
+                    st.error("Impossible de se connecter à l'API. Vérifiez que le Space Hugging Face est bien 'Running'.")
     elif input_method == "Choisir un exemple du dataset":
          if st.button("Lancer la segmentation 🚀", type="primary"):
              st.warning("Veuillez implémenter le chargement des images d'exemple.")
