@@ -34,4 +34,4 @@ jobs:
           HF_SPACE_NAME: "S0l0kame/OpenClassroomP9"
         run: |
           # Téléversement direct du code vers le Space (gère LFS automatiquement et ignore l'historique Git)
-          hf upload $HF_SPACE_NAME . . --repo-type space --token $HF_TOKEN --exclude ".git/*" ".github/*"
+          hf upload $HF_SPACE_NAME . . --repo-type space --token $HF_TOKEN
