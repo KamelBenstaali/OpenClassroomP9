@@ -121,14 +121,36 @@ if page == "Analyse Exploratoire (EDA)":
     st.markdown("<h2 style='text-align: center;'>2. Transformations d'images (Data Augmentation / Pre-processing)</h2>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center;'>Les spécifications demandent de présenter des exemples de transformations. Testez avec une image :</p>", unsafe_allow_html=True)
     
-    uploaded_eda = st.file_uploader("Chargez une image pour visualiser les transformations", type=["jpg", "png", "jpeg"], key="eda")
-    if uploaded_eda is not None:
-        image = Image.open(uploaded_eda)
-        blurred, equalized, rotated, flipped = apply_transformations(image)
+    input_method_eda = st.radio("Comment souhaitez-vous fournir l'image ?", 
+                                ["Télécharger une image (Upload)", "Choisir un exemple du dataset"], key="radio_eda")
+    
+    image_eda = None
+    
+    if input_method_eda == "Télécharger une image (Upload)":
+        uploaded_eda = st.file_uploader("Chargez une image pour visualiser les transformations", type=["jpg", "png", "jpeg"], key="eda")
+        if uploaded_eda is not None:
+            image_eda = Image.open(uploaded_eda)
+    else:
+        import os
+        example_dir = os.path.join(os.path.dirname(__file__), "data_example")
+        if os.path.exists(example_dir):
+            example_images = [f for f in os.listdir(example_dir) if f.endswith('.jpg')]
+            example_images.sort()
+        else:
+            example_images = []
+            
+        if not example_images:
+            st.error("⚠️ Aucune image trouvée dans le dossier 'data_example'.")
+        else:
+            selected_example_eda = st.selectbox("Choisissez une image de démonstration :", example_images, key="select_eda")
+            image_eda = Image.open(os.path.join(example_dir, selected_example_eda))
+
+    if image_eda is not None:
+        blurred, equalized, rotated, flipped = apply_transformations(image_eda)
         
         col1, col2, col3, col4, col5 = st.columns(5)
         with col1:
-            st.image(image, caption="Originale", use_container_width=True)
+            st.image(image_eda, caption="Originale", use_container_width=True)
         with col2:
             st.image(blurred, caption="Floutage", use_container_width=True)
         with col3:
