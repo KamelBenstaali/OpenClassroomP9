@@ -20,6 +20,10 @@ Le projet est divisé en deux grandes composantes interactives hébergées dans 
    - Retourne un masque binarisé encodé en Base64.
    - Télécharge automatiquement ses poids (`medsam_vit_b.pth`) depuis le Hub Hugging Face lors du premier démarrage pour contourner les limites de stockage Git.
 
+3. **Recherche & Modélisation (Notebooks)** :
+   - Un dossier `Mes_Notebooks/` centralise tout le travail d'exploration et d'entraînement en amont du déploiement.
+   - Vous y trouverez l'analyse approfondie du dataset ISIC 2018, les tests d'entraînement sur différents modèles classiques de segmentation (U-Net, DeepLabV3+ avec et sans Data Augmentation), ainsi que le "Proof of Concept" (POC) initial de **MedSAM** qui a mené au choix final de l'architecture déployée.
+
 ---
 
 ## 🏗️ Architecture Technique
@@ -59,6 +63,11 @@ Src/
 │       ├── tests/               # Scripts de tests unitaires pour l'UI
 │       ├── data_example/        # Échantillons d'images médicales pour démo
 │       └── data_eda/            # Données statistiques pour les graphiques EDA
+│
+├── Mes_Notebooks/               # Notebooks Jupyter (Recherche & Développement)
+│   ├── Medical_datasets_analysis/ # Analyse exploratoire des datasets (EDA ISIC2018)
+│   ├── Developping_models/        # Entraînements (UNet, DeepLabV3+, POC MedSAM, etc.)
+│   └── Benchmarking_models.ipynb  # Comparaison des performances des modèles
 │
 ├── .github/workflows/           # Pipelines CI/CD automatisés
 │   ├── ci.yml
