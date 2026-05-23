@@ -5,6 +5,13 @@ Ce projet a été réalisé dans le cadre du parcours Data Scientist (Projet 9) 
 
 ---
 
+## 🔗 Liens de l'application en direct
+
+- **L'application (Dashboard Streamlit)** : [https://gyfy85cyvcrq5fjqpp8kuv.streamlit.app](https://gyfy85cyvcrq5fjqpp8kuv.streamlit.app)
+- **L'API (Hugging Face Spaces)** : [https://huggingface.co/spaces/S0l0kame/OpenClassroomP9](https://huggingface.co/spaces/S0l0kame/OpenClassroomP9)
+
+---
+
 ## 🎯 Fonctionnalités Principales
 
 Le projet est divisé en deux grandes composantes interactives hébergées dans le Cloud :
