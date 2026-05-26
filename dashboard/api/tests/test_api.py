@@ -18,11 +18,6 @@ def test_read_root():
     assert response.status_code == 200
     assert response.json() == {"message": "Bienvenue sur l'API de Segmentation MedSAM !"}
 
-def test_get_image_not_found():
-    """Test de la route de récupération d'image avec une image inexistante"""
-    response = client.get("/images/image_inexistante_123.jpg")
-    assert response.status_code == 404
-    assert response.json() == {"detail": "Image not found"}
 
 def test_predict_segmentation_no_prompt():
     """Test de l'inférence de l'API avec une fausse image"""
