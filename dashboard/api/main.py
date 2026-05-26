@@ -43,17 +43,6 @@ if not os.path.exists(MEDSAM_CHECKPOINT_PATH):
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Dossier temporaire pour servir les images au canvas Streamlit
-TEMP_DIR = os.path.join(BASE_DIR, "temp_images")
-os.makedirs(TEMP_DIR, exist_ok=True)
-
-from fastapi.responses import FileResponse
-@app.get("/images/{filename}")
-async def get_image(filename: str):
-    filepath = os.path.join(TEMP_DIR, filename)
-    if os.path.exists(filepath):
-        return FileResponse(filepath)
-    raise HTTPException(status_code=404, detail="Image not found")
 
 print(f"Chargement du modèle MedSAM depuis {MEDSAM_CHECKPOINT_PATH} sur {device}...")
 try:

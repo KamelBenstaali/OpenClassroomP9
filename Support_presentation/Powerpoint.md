@@ -64,12 +64,3 @@
 *   **Slide 19 : Bibliographie et Sources**
     *   Mentions des articles (Nature Communications pour MedSAM, U-Net, etc.).
 *   **Slide 20 : Questions / Réponses**
-
-
----
-
-**Quelques conseils pour la conception visuelle :**
-* N'hésitez pas à abuser des **images** dans les slides (schéma du MedSAM, extraits d'images ISIC, graphiques du dashboard). Votre sujet s'y prête parfaitement (traitement d'image).
-* Limitez le texte (bullet points courts). Le détail de la "Note méthodologique" sera votre discours à l'oral. 
-
-Voulez-vous que l'on détaille le contenu ou le script oral d'une slide en particulier ?
